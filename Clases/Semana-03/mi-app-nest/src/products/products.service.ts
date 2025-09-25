@@ -1,11 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-export type IProduct = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-};
+import { IProduct } from 'src/models';
 
 @Injectable()
 export class ProductsService {
@@ -33,6 +27,14 @@ export class ProductsService {
   //Me devuelve todos los productos
   findAll(): IProduct[] {
     return this.products;
+  }
+
+  //Me devuelve un producto por su id
+  findOne(id: number): IProduct {
+    const productFind = this.products.find((product) => product.id === id);
+    //Si productFind si existe pero no tiene información
+    if (!productFind) throw new NotFoundException('Producto no encontrado');
+    return productFind;
   }
 
   //Me devuelve un producto por su nombre
