@@ -1,16 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-export type IUser = {
-  id: number;
-  name: string;
-  email: string;
-};
+import { IUser } from 'src/interfaces';
 
 @Injectable()
 export class UsersService {
   private users: IUser[] = [
-    { id: 1, name: 'John Doe', email: 'john.doe@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com' },
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: 'password123',
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      password: 'password456',
+    },
   ];
 
   //Me devuelve todos los usuarios
@@ -24,5 +29,33 @@ export class UsersService {
     //Si userFind si existe pero no tiene información
     if (!userFind) throw new NotFoundException('Usuario no encontrado');
     return userFind;
+  }
+
+  //Crear un usuario
+  //De mi interfaz IUser le omitiré el id
+  create(user: Omit<IUser, 'id'>): IUser {
+    const newId =
+      this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1;
+
+    const newUser: IUser = {
+      id: newId,
+      ...user,
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
+
+  //Método assign = Me pide el objeto original (userIndex)
+  //Qué le voy a cambiar? El nuevo usuario que le estoy pasando (newUser)
+  update(id: number, newUser: Omit<IUser, 'id'>): IUser {
+    const userIndex = this.findOne(id);
+    Object.assign(userIndex, newUser);
+    return userIndex;
+  }
+
+  remove(id: number) {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+    this.users.splice(userIndex, 1);
+    return { message: 'Usuario eliminado correctamente' };
   }
 }
