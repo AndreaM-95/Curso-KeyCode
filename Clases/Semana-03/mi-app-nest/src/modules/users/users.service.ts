@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { IUser } from 'src/interfaces';
 
 @Injectable()
@@ -6,14 +10,15 @@ export class UsersService {
   private users: IUser[] = [
     {
       id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
+      name: 'John Ortiz',
+      email: 'john@gmail.com',
+      password: '123456789',
     },
     {
       id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
+      name: 'Jane Lopez',
+      email: 'jane@outlook.com',
+      age: 28,
       password: 'password456',
     },
   ];
@@ -37,12 +42,16 @@ export class UsersService {
     const newId =
       this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1;
 
-    const newUser: IUser = {
-      id: newId,
-      ...user,
-    };
-    this.users.push(newUser);
-    return newUser;
+    if (user.age && user.age >= 18) {
+      const newUser: IUser = {
+        id: newId,
+        ...user,
+      };
+      this.users.push(newUser);
+      return newUser;
+    }
+
+    throw new BadRequestException('El usuario debe ser mayor de edad');
   }
 
   //Método assign = Me pide el objeto original (userIndex)
