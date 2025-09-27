@@ -6,27 +6,38 @@ export class ProductsService {
   private products: IProduct[] = [
     {
       id: 1,
-      name: 'Hamburguesa',
+      nameProduct: 'Hamburguesa',
       description: 'pan, lechuga, tomate, carne, queso y cebolla',
-      price: 10000,
+      price: 10000.0,
+      category: 'Comida rápida',
+      isAvailable: true,
     },
     {
       id: 2,
-      name: 'Perro',
+      nameProduct: 'Perro',
       description: 'pan, salchicha, cebolla, mostaza y ketchup',
-      price: 10000,
+      price: 10000.0,
+      category: 'Comida rápida',
+      isAvailable: false,
     },
     {
       id: 3,
-      name: 'Pizza',
+      nameProduct: 'Pizza',
       description: 'salsa de tomate, queso y pepperoni',
-      price: 20000,
+      price: 20000.0,
+      category: 'Comida italiana',
+      isAvailable: true,
     },
   ];
 
   //Me devuelve todos los productos
   findAll(): IProduct[] {
     return this.products;
+  }
+
+  // Me devuelve sólo los disponibles
+  findAvailable(): IProduct[] {
+    return this.products.filter((product) => product.isAvailable);
   }
 
   //Me devuelve un producto por su id
@@ -41,7 +52,8 @@ export class ProductsService {
   findByName(name: string): IProduct {
     const normalizedName = name.trim().toLocaleLowerCase('es-CO'); //Va a eliminar los espacios en blanco y va a convertir el nombre a minusculas según la locación del usuario
     const productFind = this.products.find(
-      (product) => product.name.toLocaleLowerCase('es-CO') === normalizedName,
+      (product) =>
+        product.nameProduct.toLocaleLowerCase('es-CO') === normalizedName,
     );
     if (!productFind) throw new NotFoundException('Producto no encontrado');
     return productFind;
@@ -63,5 +75,23 @@ export class ProductsService {
 
     this.products.push(newProduct);
     return newProduct;
+  }
+
+  //Actualiza un producto por su id
+  updateProduct(id: number, newProduct: Omit<IProduct, 'id'>): IProduct {
+    const productIndex = this.findOne(id);
+    Object.assign(productIndex, newProduct);
+    return productIndex;
+  }
+
+  //Elimina un producto por su id
+  removeProduct(id: number) {
+    const productIndex = this.products.findIndex(
+      (product) => product.id === id,
+    );
+    if (productIndex === -1)
+      throw new NotFoundException('Producto no encontrado');
+    this.products.splice(productIndex, 1);
+    return { message: 'Producto eliminado correctamente' };
   }
 }

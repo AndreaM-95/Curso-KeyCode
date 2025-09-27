@@ -1,6 +1,9 @@
 export type IProduct = {
   id: number;
-  name: string;
+  nameProduct: string;
   description: string;
   price: number;
+  category: string;
+  imageUrl?: string;
+  isAvailable: boolean;
 };

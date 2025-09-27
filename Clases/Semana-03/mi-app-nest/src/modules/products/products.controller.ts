@@ -1,6 +1,15 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { IProduct } from 'src/interfaces';
+import { CreateProductDTO } from 'src/dto/create-product.dto';
+import { UpdateProductDTO } from 'src/dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -9,6 +18,12 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+
+  //EndPoint que me devuelve sólo los productos disponibles con la ruta localhost:3000/products/available
+  @Get('available')
+  findAvailable() {
+    return this.productsService.findAvailable();
   }
 
   //EndPoint que me devuelve un producto por su id con la ruta localhost:3000/products/1
@@ -24,7 +39,20 @@ export class ProductsController {
   }
 
   @Post()
-  createProduct(@Body() product: Omit<IProduct, 'id'>) {
+  createProduct(@Body() product: CreateProductDTO) {
     return this.productsService.createProduct(product);
+  }
+
+  @Put(':id')
+  updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDTO,
+  ) {
+    return this.productsService.updateProduct(Number(id), updateProductDto);
+  }
+
+  @Delete(':id')
+  removeProduct(@Param('id') id: string) {
+    return this.productsService.removeProduct(Number(id));
   }
 }
