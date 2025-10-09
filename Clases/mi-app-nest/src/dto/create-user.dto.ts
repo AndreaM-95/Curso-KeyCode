@@ -3,6 +3,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -18,7 +19,8 @@ export class CreateUserDTO {
 
   @IsOptional()
   @IsInt()
-  @Min(0, { message: 'La edad debe ser mayor o igual a 0' })
+  @Min(18, { message: 'La edad debe ser mayor o igual a 18' })
+  @Max(100, { message: 'La edad debe ser menor o igual a 100' })
   age?: number;
 
   @IsNotEmpty()
