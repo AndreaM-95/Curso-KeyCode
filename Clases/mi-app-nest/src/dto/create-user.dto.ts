@@ -3,10 +3,9 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
+  Length,
   Max,
-  MaxLength,
   Min,
-  MinLength,
 } from 'class-validator';
 
 export class CreateUserDTO {
@@ -24,7 +23,8 @@ export class CreateUserDTO {
   age?: number;
 
   @IsNotEmpty()
-  @MinLength(6)
-  @MaxLength(10)
+  @Length(6, 10, {
+    message: 'La contraseña debe tener entre 6 y 10 caracteres',
+  })
   password: string;
 }

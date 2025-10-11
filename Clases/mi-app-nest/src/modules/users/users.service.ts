@@ -4,6 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDTO } from 'src/dto/create-user.dto';
+import { UpdateUserDTO } from 'src/dto/update-user.dto';
 import { User } from 'src/entities/user.entity';
 import { IUser } from 'src/interfaces';
 import { Repository } from 'typeorm';
@@ -15,48 +17,47 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  // //Me devuelve todos los usuarios
-  findAll(): Promise<IUser[]> {
+  /**
+   * @description Método para buscar todos los usuarios
+   * @returns IUser[] - Múltiples registros de usuarios
+   */
+  findAll() {
     return this.userRepository.find();
   }
 
-  // //Me devuelve un usuario por su id
-  // findOne(id: number): IUser {
-  //   const userFind = this.users.find((user) => user.id === id);
-  //   //Si userFind si existe pero no tiene información
-  //   if (!userFind) throw new NotFoundException('Usuario no encontrado');
-  //   return userFind;
-  // }
+  /**
+   * @description Método para buscar un usuario por su id
+   * @typeParam id: number
+   * @returns el usuario encontrado - unico registro
+   */
+  // Tiene que ser asíncrono por la gestión de la base de datos y no se bloquee
+  async findOne(id: number) {
+    //va a friltrar donde el donde (where) id sea igual al id que le estoy pasando
+    const userFind = await this.userRepository.findOne({ where: { id } });
+    if (!userFind) throw new NotFoundException('Usuario no encontrado');
+    return userFind;
+  }
 
-  // //Crear un usuario
-  // //De mi interfaz IUser le omitiré el id
-  // create(user: Omit<IUser, 'id'>): IUser {
-  //   const newId =
-  //     this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1;
+  /**
+   * @description Método para crear un usuario
+   * @Param newUser: con las validaciones de CreateUserDTO
+   * @returns el usuario creado
+   */
+  create(newUser: CreateUserDTO) {
+    const userCreated = this.userRepository.create(newUser); //Crea el usuario
+    return this.userRepository.save(userCreated); //Lo guarda en la base de datos
+  }
 
-  //   if (user.age && user.age >= 18) {
-  //     const newUser: IUser = {
-  //       id: newId,
-  //       ...user,
-  //     };
-  //     this.users.push(newUser);
-  //     return newUser;
-  //   }
+  async update(id: number, updateUser: UpdateUserDTO) {
+    await this.userRepository.update(id, updateUser); //Actualiza el usuario
+    return this.findOne(id); //Devuelve el usuario actualizado
+  }
 
-  //   throw new BadRequestException('El usuario debe ser mayor de edad');
-  // }
-
-  // //Método assign = Me pide el objeto original (userIndex)
-  // //Qué le voy a cambiar? El nuevo usuario que le estoy pasando (newUser)
-  // update(id: number, newUser: Omit<IUser, 'id'>): IUser {
-  //   const userIndex = this.findOne(id);
-  //   Object.assign(userIndex, newUser);
-  //   return userIndex;
-  // }
-
-  // remove(id: number) {
-  //   const userIndex = this.users.findIndex((user) => user.id === id);
-  //   this.users.splice(userIndex, 1);
-  //   return { message: 'Usuario eliminado correctamente' };
-  // }
+  async remove(id: number) {
+    const result = await this.userRepository.delete(id); //Eliminamos el usuario
+    //Si no se ha eliminado ningún usuario (Si no lo encuentra es 0 = false)
+    if (result.affected === 0)
+      throw new BadRequestException(`Usuario con id #${id} no encontrado.`);
+    return { message: 'Usuario eliminado correctamente' };
+  }
 }

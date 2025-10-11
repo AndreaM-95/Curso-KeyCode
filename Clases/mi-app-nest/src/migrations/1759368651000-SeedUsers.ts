@@ -5,7 +5,7 @@ export class SeedUsers1759368651000 implements MigrationInterface {
   //Se ejecuta de primeras cuando aplico la migración
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      INSERT INTO user (name, email, password, age) VALUES
+      INSERT INTO users (name, email, password, age) VALUES
       ('Ana López', 'ana@example.com', '12345', 25),
       ('Luis Gómez', 'luis@example.com', '12345', 30)
     `);
@@ -14,7 +14,7 @@ export class SeedUsers1759368651000 implements MigrationInterface {
   //Se ejecuta de últimas si quiero deshacer la migración (Borrar los datos que he insertado)
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-                  DELETE FROM user WHERE email IN ('ana@example.com', 'luis@example.com')
+                  DELETE FROM users WHERE email IN ('ana@example.com', 'luis@example.com')
             `);
   }
 }
