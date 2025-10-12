@@ -6,10 +6,12 @@ import {
   Body,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDTO } from 'src/dto/create-product.dto';
 import { UpdateProductDTO } from 'src/dto/update-product.dto';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -38,11 +40,13 @@ export class ProductsController {
     return this.productsService.findByName(name);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   createProduct(@Body() product: CreateProductDTO) {
     return this.productsService.createProduct(product);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   updateProduct(
     @Param('id') id: string,
@@ -51,6 +55,7 @@ export class ProductsController {
     return this.productsService.updateProduct(Number(id), updateProductDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   removeProduct(@Param('id') id: string) {
     return this.productsService.removeProduct(Number(id));

@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-/**
- * Servicio principal de la aplicación que proporciona métodos básicos.
- * @remarks
- * Esta clase contiene servicios simples para retornar mensajes y el estado de la aplicación.
- */
 export class AppService {
   getHello(): string {
     return 'Hello World!';

@@ -6,11 +6,14 @@ import { ValidationPipe } from '@nestjs/common';
 //Este archivo es el que crea el proyecto y lo despliega en el puerto 3000
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  
   //Habilitar la validación global y usará mis validaciones también
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-  //Si no existe la variable de entorno PORT, usa el puerto 3000
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true, 
+    transform: true,
+    transformOptions: { enableImplicitConversion: true }
+  }))
+  
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
