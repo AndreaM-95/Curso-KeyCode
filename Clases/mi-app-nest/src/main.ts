@@ -10,8 +10,8 @@ async function bootstrap() {
   //Habilitar la validación global y usará mis validaciones también
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
-    transform: true,
-    transformOptions: { enableImplicitConversion: true }
+    transform: true, //Nos permite que nuestros pipes transformen los datos
+    transformOptions: { enableImplicitConversion: true } //Nos permite hacer conversiones implícitas (como de string a number con ParseIntPipe)
   }))
   
   const port = process.env.PORT || 3000;

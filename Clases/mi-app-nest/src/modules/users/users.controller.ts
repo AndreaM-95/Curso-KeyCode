@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
@@ -18,17 +19,15 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {} //Inyectamos el servicio
 
-  //EndPoint que me devuelve todos los usuarios con la ruta localhost:3000/users
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  // //EndPoint que me devuelve un usuario por su id con la ruta localhost:3000/users/1
   // //El id siempre llega como string
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(Number(id)); //Lo convertimos a número
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Post() //Sea estricto con el body según mi DTO
@@ -37,12 +36,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: UpdateUserDTO) {
-    return this.usersService.update(Number(id), body);
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDTO) {
+    return this.usersService.update(id, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(Number(id));
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 }

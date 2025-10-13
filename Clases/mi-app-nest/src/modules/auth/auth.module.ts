@@ -10,8 +10,8 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forFeature([User]),
+    ConfigModule.forRoot({ isGlobal: true }), //Cargar las variables de entorno
+    TypeOrmModule.forFeature([User]), //Importar la entidad User
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
