@@ -1,97 +1,87 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IProduct } from 'src/interfaces';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateProductDTO } from 'src/dto/create-product.dto';
+import { UpdateProductDTO } from 'src/dto/update-product.dto';
+import { Product } from 'src/entities/product.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  private products: IProduct[] = [
-    {
-      id: 1,
-      nameProduct: 'Hamburguesa',
-      description: 'pan, lechuga, tomate, carne, queso y cebolla',
-      price: 10000.0,
-      category: 'Comida rápida',
-      isAvailable: true,
-    },
-    {
-      id: 2,
-      nameProduct: 'Perro',
-      description: 'pan, salchicha, cebolla, mostaza y ketchup',
-      price: 10000.0,
-      category: 'Comida rápida',
-      isAvailable: false,
-    },
-    {
-      id: 3,
-      nameProduct: 'Pizza',
-      description: 'salsa de tomate, queso y pepperoni',
-      price: 20000.0,
-      category: 'Comida italiana',
-      isAvailable: true,
-    },
-  ];
+  constructor(
+    @InjectRepository(Product)
+    private productsRepository: Repository<Product>) {}
 
-  //Me devuelve todos los productos
-  findAll(): IProduct[] {
-    return this.products;
+  /**
+   * @description Método para encontrar todos los productos en la base de datos
+   * @returns Devuelve un arreglo con todos los productos
+   */
+  findAll(){
+    return this.productsRepository.find();
   }
 
-  // Me devuelve sólo los disponibles
-  findAvailable(): IProduct[] {
-    return this.products.filter((product) => product.isAvailable);
-  }
-
-  //Me devuelve un producto por su id
-  findOne(id: number): IProduct {
-    const productFind = this.products.find((product) => product.id === id);
-    //Si productFind si existe pero no tiene información
+  /**
+   * @description Método asíncrono usado para encontrar un producto por su id
+   * @param {number} id - Identificador del producto a buscar.
+   * @returns {Promise<Product>} El producto encontrado.
+   * @throws {NotFoundException} Si el producto no existe.
+   */
+  async findOne(id: number) {
+    const productFind = await this.productsRepository.findOne({ where: { id } });
     if (!productFind) throw new NotFoundException('Producto no encontrado');
     return productFind;
   }
 
-  //Me devuelve un producto por su nombre
-  findByName(name: string): IProduct {
-    const normalizedName = name.trim().toLocaleLowerCase('es-CO'); //Va a eliminar los espacios en blanco y va a convertir el nombre a minusculas según la locación del usuario
-    const productFind = this.products.find(
-      (product) =>
-        product.nameProduct.toLocaleLowerCase('es-CO') === normalizedName,
-    );
+  /**
+   * @description Método asíncrono usado para encontrar un producto por su nombre
+   * @param {string} nameProduct - Nombre exacto del producto a buscar.
+   * @returns {Promise<Product>} El producto encontrado.
+   * @throws {NotFoundException} Si no se encuentra un producto con ese nombre.
+   */
+  async findByName(nameProduct: string) {
+    const productFind = await this.productsRepository.findOne({ where: { nameProduct } });
     if (!productFind) throw new NotFoundException('Producto no encontrado');
     return productFind;
   }
 
-  //Este método crea un nuevo producto, le asignamos manualmente el ID en orden secuencial y creamos un nuevo producto
-  //Tengo un tipo IProduct pero indico que omita el ID
-  createProduct(product: Omit<IProduct, 'id'>): IProduct {
-    // generar un nuevo id
-    const newId =
-      this.products.length > 0 //Pregunta: ¿ya tengo productos en mi arreglo?
-        ? this.products[this.products.length - 1].id + 1 // Accedemos directamente al último producto del arreglo con -1 y luego tomar su ID y así sumarle 1
-        : 1; //Si no hay productos, el ID va a ser 1
-
-    const newProduct: IProduct = {
-      id: newId,
-      ...product,
-    };
-
-    this.products.push(newProduct);
-    return newProduct;
+  /**
+   * @description Método para encontrar los productos disponibles
+   * @returns Lista de productos con el campo `isAvailable` en `true`.
+   */
+  findAvailable() {
+    return this.productsRepository.find({ where: { isAvailable: true } });
   }
 
-  //Actualiza un producto por su id
-  updateProduct(id: number, newProduct: Omit<IProduct, 'id'>): IProduct {
-    const productIndex = this.findOne(id);
-    Object.assign(productIndex, newProduct);
-    return productIndex;
+  /**
+   * @description Crea un nuevo producto y lo guarda en la base de datos.
+   * @param {CreateProductDTO} newProduct - Objeto con los datos del nuevo producto.
+   * @returns El producto recién creado.
+   */
+  createProduct(newProduct: CreateProductDTO) {
+    const productCreated = this.productsRepository.create(newProduct);
+    return this.productsRepository.save(productCreated);
   }
 
-  //Elimina un producto por su id
-  removeProduct(id: number) {
-    const productIndex = this.products.findIndex(
-      (product) => product.id === id,
-    );
-    if (productIndex === -1)
-      throw new NotFoundException('Producto no encontrado');
-    this.products.splice(productIndex, 1);
+  /**
+   * @description Actualiza los datos de un producto existente.
+   * @param {number} id - Identificador del producto a actualizar.
+   * @param {UpdateProductDTO} newProduct - Datos actualizados del producto.
+   * @returns {Promise<Product>} El producto actualizado.
+   * @throws {NotFoundException} Si el producto no existe.
+   */
+  async updateProduct(id: number, newProduct: UpdateProductDTO) {
+    await this.productsRepository.update(id, newProduct);
+    return this.findOne(id);
+  }
+
+  /**
+   * @description Elimina un producto de la base de datos por su identificador.
+   * @param {number} id - Identificador del producto a eliminar.
+   * @returns {Promise<{ message: string }>} Mensaje de confirmación de eliminación.
+   * @throws {NotFoundException} Si no se encuentra el producto a eliminar.
+   */
+  async removeProduct(id: number) {
+    const result = await this.productsRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException(`Producto con id #${id} no encontrado.`);
     return { message: 'Producto eliminado correctamente' };
   }
 }

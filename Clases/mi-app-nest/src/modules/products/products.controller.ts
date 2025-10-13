@@ -7,11 +7,16 @@ import {
   Put,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDTO } from 'src/dto/create-product.dto';
 import { UpdateProductDTO } from 'src/dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesEnum } from 'src/entities/user.entity';
+import { RolesGuard } from '../auth/roles.guard';
+import { ParseUpperTrimePipe } from 'src/common/pipes/parse-uppertrim.pipe';
 
 @Controller('products')
 export class ProductsController {
@@ -22,42 +27,41 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  //EndPoint que me devuelve sólo los productos disponibles con la ruta localhost:3000/products/available
   @Get('available')
   findAvailable() {
     return this.productsService.findAvailable();
   }
 
-  //EndPoint que me devuelve un producto por su id con la ruta localhost:3000/products/1
-  //El id siempre llega como string
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(Number(id)); //Casteamos el id de string a número
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolesEnum.ADMIN, RolesEnum.USER)
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.findOne(id);
   }
 
-  @Get('by-name/:name') //La ruta es http://localhost:3000/products/by-name/perro
-  findByName(@Param('name') name: string) {
+  @Get('by-name/:name')
+  findByName(@Param('name', ParseUpperTrimePipe) name: string) {
     return this.productsService.findByName(name);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolesEnum.ADMIN)
   createProduct(@Body() product: CreateProductDTO) {
     return this.productsService.createProduct(product);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  updateProduct(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDTO,
-  ) {
-    return this.productsService.updateProduct(Number(id), updateProductDto);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolesEnum.ADMIN)
+  updateProduct(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateProductDTO) {
+    return this.productsService.updateProduct(id, body);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  removeProduct(@Param('id') id: string) {
-    return this.productsService.removeProduct(Number(id));
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolesEnum.ADMIN)
+  removeProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.removeProduct(id);
   }
 }

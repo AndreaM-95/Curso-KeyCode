@@ -28,14 +28,7 @@ export class CreateProductDTO {
   @IsNumber({}, { message: 'El precio debe ser un número' })
   price: number;
 
-  @IsNotEmpty()
-  category: string;
-
   @IsOptional()
   @IsUrl({}, { message: 'La imagen debe ser una URL válida' })
   imageUrl?: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  isAvailable: boolean;
 }
