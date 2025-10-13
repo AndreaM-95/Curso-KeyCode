@@ -1,5 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+export type Roles = 'admin' | 'user'; //Me define que posibilidad de datos puedo usar
+export enum RolesEnum {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 //Esta es la estructura de la tabla en la base de datos
 @Entity('users')
 export class User {
@@ -18,4 +24,7 @@ export class User {
 
   @Column({ nullable: true }) // NULL - puede estar vacio
   age?: number;
+
+  @Column({ default: 'user' }) // Valor por defecto
+  role: Roles;
 }
