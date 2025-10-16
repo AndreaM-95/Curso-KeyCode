@@ -9,13 +9,14 @@ import { Repository } from 'typeorm';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private productsRepository: Repository<Product>) {}
+    private productsRepository: Repository<Product>,
+  ) {}
 
   /**
    * @description Método para encontrar todos los productos en la base de datos
    * @returns Devuelve un arreglo con todos los productos
    */
-  findAll(){
+  findAll() {
     return this.productsRepository.find();
   }
 
@@ -26,7 +27,9 @@ export class ProductsService {
    * @throws {NotFoundException} Si el producto no existe.
    */
   async findOne(id: number) {
-    const productFind = await this.productsRepository.findOne({ where: { id } });
+    const productFind = await this.productsRepository.findOne({
+      where: { id },
+    });
     if (!productFind) throw new NotFoundException('Producto no encontrado');
     return productFind;
   }
@@ -38,7 +41,9 @@ export class ProductsService {
    * @throws {NotFoundException} Si no se encuentra un producto con ese nombre.
    */
   async findByName(nameProduct: string) {
-    const productFind = await this.productsRepository.findOne({ where: { nameProduct } });
+    const productFind = await this.productsRepository.findOne({
+      where: { nameProduct },
+    });
     if (!productFind) throw new NotFoundException('Producto no encontrado');
     return productFind;
   }
@@ -74,6 +79,26 @@ export class ProductsService {
   }
 
   /**
+   * @description Desactiva un producto estableciendo su campo `isAvailable` a `false`.
+   * @param id del producto a desactivar.
+   * @returns Mensaje de confirmación y el producto desactivado.
+   */
+  async disabled(id: number) {
+    const productFind = await this.productsRepository.findOne({
+      where: { id },
+    });
+
+    if (!productFind) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    productFind.isAvailable = false;
+    await this.productsRepository.save(productFind);
+
+    return { message: `Producto ${id} desactivado correctamente`, productFind };
+  }
+
+  /**
    * @description Elimina un producto de la base de datos por su identificador.
    * @param {number} id - Identificador del producto a eliminar.
    * @returns {Promise<{ message: string }>} Mensaje de confirmación de eliminación.
@@ -81,7 +106,8 @@ export class ProductsService {
    */
   async removeProduct(id: number) {
     const result = await this.productsRepository.delete(id);
-    if (result.affected === 0) throw new NotFoundException(`Producto con id #${id} no encontrado.`);
+    if (result.affected === 0)
+      throw new NotFoundException(`Producto con id #${id} no encontrado.`);
     return { message: 'Producto eliminado correctamente' };
   }
 }

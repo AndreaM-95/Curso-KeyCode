@@ -61,6 +61,13 @@ export class ProductsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RolesEnum.ADMIN)
+  desactive(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.disabled(id);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RolesEnum.ADMIN)
   removeProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.removeProduct(id);
   }

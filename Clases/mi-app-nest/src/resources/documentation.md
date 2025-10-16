@@ -33,6 +33,10 @@ Las pruebas se realizan mediante **Postman**.
 ```
 src/
  ├── common/
+ │   ├── exceptions
+ │   │   └── bussines.exception.ts
+ │   ├── filters
+ │   │   └── http-exception.filter.ts
  │   ├── pipes
  │   │   └── parse-uppertrim.pipe.ts
  │   ├── utils
@@ -77,6 +81,7 @@ src/
  ├── app.controller.ts
  ├── app.module.ts
  ├── app.service.ts
+ ├── jest.config.ts
  └── main.ts
 ```
 
@@ -113,6 +118,7 @@ src/
 | `GET` | `/products/by-name/:name` | Obtiene un producto por nombre | ❌ | Libre |
 | `POST` | `/products` | Crea un nuevo producto | ✅ | Admin |
 | `PUT` | `/products/:id` | Edita un producto existente | ✅ | Admin |
+| `DELETE` | `/products/:id` | Cambia el estado del producto | ✅ | Admin |
 | `DELETE` | `/products/:id` | Elimina un producto | ✅ | Admin |
 
 ---

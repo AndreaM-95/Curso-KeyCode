@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './common/filters/http-excepcion.filter';
 
 //Este es nuestro punto de entrada a la aplicacion
-//Este archivo es el que crea el proyecto y lo despliega en el puerto 3000
+//Este archivo es el que crea el proyecto y lo despliega en el puerto 4000
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+  app.useGlobalFilters(new AllExceptionsFilter()) //Habilitar el filtro global de excepciones
+
   //Habilitar la validación global y usará mis validaciones también
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
