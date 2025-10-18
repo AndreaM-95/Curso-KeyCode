@@ -48,10 +48,26 @@ export class UsersService {
     return this.userRepository.save(userCreated); //Lo guarda en la base de datos
   }
 
+  /**
+ * @description Actualiza los datos de un usuario existente por su ID.
+ * Si se proporciona una nueva contraseña, esta será hasheada antes de guardar.
+ * 
+ * @param id - El identificador único del usuario a actualizar.
+ * @param updateUser - Objeto con los campos a actualizar, basado en UpdateUserDTO.
+ * @returns Una promesa que resuelve con el usuario actualizado.
+ * @throws {NotFoundException} Si el usuario no existe.
+ */
   async update(id: number, updateUser: UpdateUserDTO) {
-    const hashedPassword = await bcrypt.hash(updateUser.password, 10); //Encriptar la contraseña, dará 10 vueltas
-    await this.userRepository.update(id, { ...updateUser, password: hashedPassword }); //Actualiza el usuario
-    return this.findOne(id); //Devuelve el usuario actualizado
+    const dataToUpdate = { ...updateUser }
+        let dataWithPassword;
+
+        if (updateUser.password) {
+            const hashedPassword = await bcrypt.hash(updateUser.password, 10)
+            dataWithPassword = { ...dataToUpdate, password: hashedPassword }
+        }
+
+        await this.userRepository.update(id, updateUser.password ? dataWithPassword : dataToUpdate);
+        return this.findOne(id);
   }
 
   async remove(id: number) {

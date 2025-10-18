@@ -53,7 +53,7 @@ export class ProductsService {
    * @returns Lista de productos con el campo `isAvailable` en `true`.
    */
   findAvailable() {
-    return this.productsRepository.find({ where: { isAvailable: true } });
+    return this.productsRepository.findBy({ isAvailable: true });
   }
 
   /**

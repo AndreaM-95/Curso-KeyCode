@@ -62,18 +62,24 @@ src/
  |   ├── auth/
  │   |   ├── auth.controller.ts
  │   |   ├── auth.module.ts
+ │   |   ├── auth.service.spec.ts
  │   |   ├── auth.service.ts
  |   |   ├── jwt.guard.ts
  │   |   ├── jwt.strategy.ts
  │   |   ├── roles.decorator.ts
+ │   |   ├── roles.guard.spec.ts
  │   |   └── roles.guard.ts
  |   ├── products/
+ │   |   ├── products.controller.spec.ts
  │   |   ├── products.controller.ts
  │   |   ├── products.module.ts
+ │   |   ├── products.service.spec.ts
  │   |   └── products.service.ts
  │   └── users/
+ │   |   ├── users.controller.spec.ts
  │   |   ├── users.controller.ts
  │   |   ├── users.module.ts
+ │   |   ├── users.service.spec.ts
  │   |   └── users.service.ts
  ├── resources/
  │   └── ducumentation.md
@@ -215,6 +221,8 @@ JWT_EXPIRES_IN= tiempo_expiracion_token
 | v2.3.2 | 13/10/2025 | Registro de usuario |
 | v2.3.3 | 13/10/2025 | Encriptación |
 | v2.3.3 | 13/10/2025 | Rutas protegidas |
+| | | |
+| v3.0.0 | 18/10/2025 | Testing de la API |
 
 ---
 

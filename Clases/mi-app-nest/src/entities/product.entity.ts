@@ -2,6 +2,15 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export type Category = 'vegetales' | 'frutas' | 'lacteos' | 'carnes' | 'bebidas' | 'otros';
 
+export enum CategoryEnum {
+    VEGETALES = 'vegetales',
+    FRUTAS = 'frutas',
+    LACTEOS = 'lacteos',
+    CARNES = 'carnes',
+    BEBIDAS = 'bebidas',
+    OTROS = 'otros'
+}
+
 @Entity('products')
 export class Product {
     @PrimaryGeneratedColumn()
