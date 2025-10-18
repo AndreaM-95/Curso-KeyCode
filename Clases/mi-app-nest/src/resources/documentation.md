@@ -221,8 +221,8 @@ JWT_EXPIRES_IN= tiempo_expiracion_token
 | v2.3.2 | 13/10/2025 | Registro de usuario |
 | v2.3.3 | 13/10/2025 | Encriptación |
 | v2.3.3 | 13/10/2025 | Rutas protegidas |
-| | | |
-| v3.0.0 | 18/10/2025 | Testing de la API |
+| v2.4.0 | 18/10/2025 | Testing de la API |
+| v2.5.0 | 18/10/2025 | Documentación en swagger |
 
 ---
 
@@ -231,7 +231,7 @@ JWT_EXPIRES_IN= tiempo_expiracion_token
 - Proyecto probado con **Postman** localmente.  
 - Base de datos administrada con **DBeaver**.  
 - Las rutas están protegidas con `JwtAuthGuard` excepto `/auth/register` y `/auth/login`.  
-- No se incluye Swagger pero estará en proceso.
+- Documentación de la API en Swagger.
 
 ---
 

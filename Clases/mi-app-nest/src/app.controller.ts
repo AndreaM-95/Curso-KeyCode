@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
 //Este controlador es el que tiene las rutas HTTP (los endpoints)
-@Controller() // Es un decorador que define que esta clase es un controlador
+@Controller('/api') // Es un decorador que define que esta clase es un controlador
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
